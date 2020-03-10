@@ -274,6 +274,10 @@ workflows:
           browser: << pipeline.parameters.browser >>
           bver: << pipeline.parameters.bver >>
           topology: << pipeline.parameters.topology >>
+      - run-network-tests:
+          name: network << pipeline.parameters.environment >> << pipeline.parameters.browser >> << pipeline.parameters.topology >>
+          browser: << pipeline.parameters.browser >>
+          topology: << pipeline.parameters.topology >>
   Backend_Workflow:
     when: << pipeline.parameters.backend_workflow >>
     jobs:
