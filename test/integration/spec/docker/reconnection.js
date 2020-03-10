@@ -248,7 +248,7 @@ describe('Reconnection states and events', function() {
       await dockerAPI.blockIpRanges(ipRanges);
       await waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT);
       await dockerAPI.unblockIpRanges(ipRanges);
-      return waitFor(reconnectedPromises, `reconnectedPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT);
+      return waitFor(reconnectedPromises, `reconnectedPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT);
     });
   });
 
@@ -304,7 +304,7 @@ describe('Reconnection states and events', function() {
 
         it('should emit "reconnecting" on the Rooms and LocalParticipants', () => {
           return Promise.all([
-            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT),
+            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT),
             waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT)
           ]);
         });
@@ -312,31 +312,27 @@ describe('Reconnection states and events', function() {
         context('that is longer than the session timeout', () => {
           it(`should emit "disconnected" on the Rooms and LocalParticipants${isFirefox ? ' - @unstable' : ''}`, async () => {
             await Promise.all([
-              waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT),
-              waitFor(reconnectingPromises, `reconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT)
+              waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT),
+              waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT)
             ]);
             return Promise.all([
-              waitFor(localParticipantDisconnectedPromises, `localParticipantDisconnectedPromises${rooms[0].sid}`, DISCONNECTED_TIMEOUT),
-              waitFor(disconnectedPromises, `disconnectedPromises${rooms[0].sid}`, DISCONNECTED_TIMEOUT)
+              waitFor(localParticipantDisconnectedPromises, `localParticipantDisconnectedPromises:${rooms[0].sid}`, DISCONNECTED_TIMEOUT),
+              waitFor(disconnectedPromises, `disconnectedPromises:${rooms[0].sid}`, DISCONNECTED_TIMEOUT)
             ]);
           });
         });
 
         context('that recovers before the session timeout', () => {
           it(`should emit "reconnected" on the Rooms and LocalParticipants${isFirefox ? ' - @unstable' : ''}`, async () => {
-            await Promise.all([
-              waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT),
-              waitFor(reconnectingPromises, `reconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT)
-            ]);
+            await waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT);
+            await waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT);
 
             await waitFor(currentNetworks.map(({ Id: networkId }) => dockerAPI.connectToNetwork(networkId)), 'reconnect to original networks');
             await readCurrentNetworks(dockerAPI);
             await waitToGoOnline();
 
-            await Promise.all([
-              waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT),
-              waitFor(reconnectedPromises, `reconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT)
-            ]);
+            await waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT);
+            await waitFor(reconnectedPromises, `reconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT);
 
             if (identities.length > 1) {
               await waitFor(rooms.map(validateMediaFlow), `validate media flow: ${rooms[0].sid}`, VALIDATE_MEDIA_FLOW_TIMEOUT);
@@ -361,12 +357,12 @@ describe('Reconnection states and events', function() {
           await readCurrentNetworks(dockerAPI);
 
           await Promise.all([
-            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT),
-            waitFor(reconnectingPromises, `reconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT)
+            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT),
+            waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT)
           ]);
           await Promise.all([
-            waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT),
-            waitFor(reconnectedPromises, `reconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT)
+            waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT),
+            waitFor(reconnectedPromises, `reconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT)
           ]);
 
           if (identities.length > 1) {
@@ -392,12 +388,12 @@ describe('Reconnection states and events', function() {
           await waitToGoOnline();
 
           await Promise.all([
-            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT),
-            waitFor(reconnectingPromises, `reconnectingPromises${rooms[0].sid}`, RECONNECTING_TIMEOUT)
+            waitFor(localParticipantReconnectingPromises, `localParticipantReconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT),
+            waitFor(reconnectingPromises, `reconnectingPromises:${rooms[0].sid}`, RECONNECTING_TIMEOUT)
           ]);
           await Promise.all([
-            waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT),
-            waitFor(reconnectedPromises, `reconnectedPromises${rooms[0].sid}`, RECONNECTED_TIMEOUT)
+            waitFor(localParticipantReconnectedPromises, `localParticipantReconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT),
+            waitFor(reconnectedPromises, `reconnectedPromises:${rooms[0].sid}`, RECONNECTED_TIMEOUT)
           ]);
 
           if (identities.length > 1) {
