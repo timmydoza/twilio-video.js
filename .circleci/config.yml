@@ -269,15 +269,22 @@ workflows:
   Custom_Workflow:
     when: << pipeline.parameters.custom_workflow >>
     jobs:
-      - run-integration-tests:
-          name: << pipeline.parameters.environment >> << pipeline.parameters.browser >> << pipeline.parameters.bver >>  << pipeline.parameters.topology >>
-          browser: << pipeline.parameters.browser >>
-          bver: << pipeline.parameters.bver >>
-          topology: << pipeline.parameters.topology >>
       - run-network-tests:
-          name: network << pipeline.parameters.environment >> << pipeline.parameters.browser >> << pipeline.parameters.topology >>
-          browser: << pipeline.parameters.browser >>
-          topology: << pipeline.parameters.topology >>
+          name: network ff group << pipeline.parameters.environment >>
+          <<: *browser_firefox
+          <<: *topology_group
+      - run-network-tests:
+          name: network ff p2p << pipeline.parameters.environment >>
+          <<: *browser_firefox
+          <<: *topology_p2p
+      - run-network-tests:
+          name: network chrome group << pipeline.parameters.environment >>
+          <<: *browser_chrome
+          <<: *topology_group
+      - run-network-tests:
+          name: network chrome p2p << pipeline.parameters.environment >>
+          <<: *browser_chrome
+          <<: *topology_p2p
   Backend_Workflow:
     when: << pipeline.parameters.backend_workflow >>
     jobs:
